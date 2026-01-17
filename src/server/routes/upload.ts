@@ -36,11 +36,7 @@ upload.post('/admin', async (c) => {
         return c.json({ error: 'No file provided' }, 400);
     }
 
-    // Check file size
-    const fileSizeMB = file.size / (1024 * 1024);
-    if (fileSizeMB > MAX_FILE_SIZE_MB) {
-        return c.json({ error: `File size exceeds ${MAX_FILE_SIZE_MB}MB limit` }, 400);
-    }
+    // Admin has no file size limit
 
     // Generate unique filename
     const ext = path.extname(file.name);
