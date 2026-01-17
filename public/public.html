@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileDawnloader - アップロード</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script>
+        // Auto-fill code from URL
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            if (code) {
+                document.getElementById('codeInput').value = code;
+            }
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1>FileDawnloader</h1>
+        <p>ファイルアップロードポータル</p>
+    </header>
+
+    <div class="container">
+        <!-- Code Input -->
+        <div class="code-section">
+            <h3>アップロードコード</h3>
+            <div class="form-group">
+                <input type="text" id="codeInput" placeholder="アップロードコードを入力">
+            </div>
+        </div>
+
+        <!-- Upload Area -->
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📤</div>
+            <h2>ここにファイルをドロップ、またはクリックして選択</h2>
+            <p>最大ファイルサイズはアップロードコードにより異なります</p>
+        </div>
+
+        <input type="file" id="fileInput" />
+
+        <!-- Display Name Input -->
+        <div class="form-group">
+            <label for="displayName">表示名（任意）</label>
+            <input type="text" id="displayName" placeholder="ファイルの表示名を入力">
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">アップロード中... 0%</div>
+        </div>
+
+        <!-- Result Card -->
+        <div class="result-card" id="resultCard">
+            <h3>✓ アップロード完了！</h3>
+            <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">ダウンロードリンク:</p>
+            <div class="link-box">
+                <input type="text" class="link-input" id="downloadLink" readonly>
+                <button class="copy-btn" id="copyBtn">コピー</button>
+            </div>
+            <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.8rem;">
+                このリンクを共有してください。ファイルは7日間有効です。
+            </p>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

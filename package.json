@@ -1,0 +1,25 @@
+{
+  "name": "filedawnloader",
+  "version": "1.0.0",
+  "description": "Personal unlimited file sharing service with Discord integration",
+  "main": "src/server/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/server/index.ts",
+    "bot": "bun run src/bot/index.ts",
+    "start": "concurrently \"bun run src/server/index.ts\" \"bun run src/bot/index.ts\"",
+    "cleanup": "bun run src/utils/cleanup.ts",
+    "db:init": "bun run src/db/init.ts"
+  },
+  "dependencies": {
+    "hono": "^4.6.0",
+    "discord.js": "^14.16.0",
+    "nanoid": "^5.0.0",
+    "cookie": "^1.0.0",
+    "concurrently": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cookie": "^1.0.0"
+  }
+}

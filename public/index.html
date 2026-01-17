@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileDawnloader - 管理画面</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>FileDawnloader</h1>
+        <p>パーソナル ファイル共有サービス</p>
+    </header>
+
+    <div class="container">
+        <!-- Upload Area -->
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📤</div>
+            <h2>ここにファイルをドロップ、またはクリックして選択</h2>
+            <p>最大ファイルサイズ: 500MB · ファイルは7日後に自動削除</p>
+        </div>
+
+        <input type="file" id="fileInput" />
+
+        <!-- Display Name Input -->
+        <div class="form-group">
+            <label for="displayName">表示名（任意）</label>
+            <input type="text" id="displayName" placeholder="ファイルの表示名を入力">
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">アップロード中... 0%</div>
+        </div>
+
+        <!-- Result Card -->
+        <div class="result-card" id="resultCard">
+            <h3>✓ アップロード完了！</h3>
+            <p style="margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">ダウンロードリンク:</p>
+            <div class="link-box">
+                <input type="text" class="link-input" id="downloadLink" readonly>
+                <button class="copy-btn" id="copyBtn">コピー</button>
+            </div>
+        </div>
+
+        <!-- File List -->
+        <div class="file-list">
+            <h3>アップロード済みファイル</h3>
+            <div id="fileList">
+                <div class="empty-state">
+                    <div class="spinner"></div>
+                    <p>読み込み中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
