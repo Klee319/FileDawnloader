@@ -51,8 +51,12 @@ function formatFileSize(bytes: number): string {
 }
 
 function formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    // UTC+9 (JST) に手動変換
+    // DBの時刻はUTCで保存されているため、明示的にUTCとして解釈させる
+    const utcDateStr = dateStr.includes('Z') || dateStr.includes('+')
+        ? dateStr
+        : dateStr.replace(' ', 'T') + 'Z';
+    const date = new Date(utcDateStr);
+    // UTC+9 (JST) に変換
     const jstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
     const month = String(jstDate.getUTCMonth() + 1).padStart(2, '0');
     const day = String(jstDate.getUTCDate()).padStart(2, '0');
