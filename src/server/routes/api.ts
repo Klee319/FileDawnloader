@@ -3,6 +3,8 @@ import { Hono } from 'hono';
 import { db } from '../../db';
 import { isAdmin } from '../middleware/auth';
 import fs from 'fs/promises';
+import path from 'path';
+import { updateAllPanels } from '../../bot/index';
 
 const api = new Hono();
 
@@ -15,7 +17,7 @@ api.get('/files', async (c) => {
     }
 
     const files = db.getAllActiveFiles();
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const baseUrl = (process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`) + (process.env.BASE_PATH || '');
 
     const filesWithLinks = files.map(file => {
         const adminLink = db.getAdminDownloadLink(file.id);
@@ -51,13 +53,17 @@ api.delete('/files/:id', async (c) => {
 
     // Delete physical file
     try {
-        await fs.unlink(file.file_path);
+        const absolutePath = path.resolve(file.file_path);
+        await fs.unlink(absolutePath);
     } catch (e) {
-        console.warn(`Failed to delete physical file: ${file.file_path}`);
+        console.error(`Failed to delete physical file: ${file.file_path}`, e);
     }
 
     // Delete database record
     db.deleteFile(id);
+
+    // Update Discord panels
+    updateAllPanels().catch(console.error);
 
     return c.json({ success: true });
 });
@@ -81,7 +87,7 @@ api.post('/codes/upload', async (c) => {
         expiresInHours,
     });
 
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const baseUrl = (process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`) + (process.env.BASE_PATH || '');
     const uploadUrl = `${baseUrl}/public?code=${code.code}`;
 
     return c.json({
@@ -120,7 +126,7 @@ api.post('/links/download', async (c) => {
 
     const body = await c.req.json();
     const fileId = body.fileId;
-    const maxDownloads = body.maxDownloads || 1;
+    const maxDownloads = body.maxDownloads || 2;
     const expiresInHours = body.expiresInHours;
 
     const file = db.getFileById(fileId);
@@ -134,7 +140,7 @@ api.post('/links/download', async (c) => {
         expiresInHours,
     });
 
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const baseUrl = (process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`) + (process.env.BASE_PATH || '');
     const downloadUrl = `${baseUrl}/d/${link.code}`;
 
     return c.json({
@@ -154,7 +160,7 @@ api.get('/links/:fileId', async (c) => {
 
     const fileId = c.req.param('fileId');
     const links = db.getDownloadLinksByFileId(fileId);
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const baseUrl = (process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`) + (process.env.BASE_PATH || '');
 
     return c.json({
         links: links.map(link => ({

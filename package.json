@@ -5,9 +5,10 @@
   "main": "src/server/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch src/server/index.ts",
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "server": "bun run src/server/index.ts",
     "bot": "bun run src/bot/index.ts",
-    "start": "concurrently \"bun run src/server/index.ts\" \"bun run src/bot/index.ts\"",
     "cleanup": "bun run src/utils/cleanup.ts",
     "db:init": "bun run src/db/init.ts"
   },

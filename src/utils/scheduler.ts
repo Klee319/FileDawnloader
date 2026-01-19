@@ -3,6 +3,7 @@
 
 import { db } from '../db';
 import fs from 'fs/promises';
+import path from 'path';
 
 const CLEANUP_INTERVAL = 60 * 60 * 1000; // 1 hour
 
@@ -14,8 +15,9 @@ export async function runCleanup(): Promise<number> {
 
         for (const filePath of expiredFilePaths) {
             try {
-                await fs.unlink(filePath);
-                console.log(`[Cleanup] Deleted: ${filePath}`);
+                const absolutePath = path.resolve(filePath);
+                await fs.unlink(absolutePath);
+                console.log(`[Cleanup] Deleted: ${absolutePath}`);
             } catch (e) {
                 // File might already be deleted
             }

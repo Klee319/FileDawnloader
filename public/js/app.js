@@ -1,8 +1,27 @@
 // FileDawnloader - Main Application JS
 
+// Detect base path from URL (for reverse proxy support, e.g., /node1)
+function getBasePath() {
+    const path = window.location.pathname;
+    const normalized = path.replace(/\/$/, '');
+
+    // Known routes
+    if (normalized === '' || normalized === '/public') {
+        return '';
+    }
+    if (normalized.endsWith('/public')) {
+        return normalized.slice(0, -7); // remove '/public'
+    }
+    // Root with query params (admin page)
+    return normalized;
+}
+
+const BASE_PATH = getBasePath();
+
 class FileDawnloader {
     constructor(isAdmin = true) {
         this.isAdmin = isAdmin;
+        this.basePath = BASE_PATH;
         this.uploadArea = document.getElementById('uploadArea');
         this.fileInput = document.getElementById('fileInput');
         this.displayNameInput = document.getElementById('displayName');
@@ -14,6 +33,14 @@ class FileDawnloader {
         this.copyBtn = document.getElementById('copyBtn');
         this.fileList = document.getElementById('fileList');
         this.codeInput = document.getElementById('codeInput');
+
+        // Confirmation section elements (public upload only)
+        this.confirmSection = document.getElementById('confirmSection');
+        this.confirmFileName = document.getElementById('confirmFileName');
+        this.confirmFileSize = document.getElementById('confirmFileSize');
+        this.confirmUploadBtn = document.getElementById('confirmUploadBtn');
+        this.cancelUploadBtn = document.getElementById('cancelUploadBtn');
+        this.pendingFile = null;
 
         this.init();
     }
@@ -37,6 +64,14 @@ class FileDawnloader {
             this.copyBtn.addEventListener('click', () => this.copyLink());
         }
 
+        // Confirmation buttons (public upload only)
+        if (this.confirmUploadBtn) {
+            this.confirmUploadBtn.addEventListener('click', () => this.confirmUpload());
+        }
+        if (this.cancelUploadBtn) {
+            this.cancelUploadBtn.addEventListener('click', () => this.cancelUpload());
+        }
+
         // Load file list for admin
         if (this.isAdmin && this.fileList) {
             this.loadFiles();
@@ -57,15 +92,72 @@ class FileDawnloader {
         this.uploadArea.classList.remove('dragover');
         const files = e.dataTransfer.files;
         if (files.length > 0) {
-            this.uploadFile(files[0]);
+            this.handleFile(files[0]);
         }
     }
 
     handleFileSelect(e) {
         const files = e.target.files;
         if (files.length > 0) {
-            this.uploadFile(files[0]);
+            this.handleFile(files[0]);
         }
+    }
+
+    handleFile(file) {
+        // Admin uploads immediately, public shows confirmation
+        if (this.isAdmin) {
+            this.uploadFile(file);
+        } else {
+            this.showConfirmation(file);
+        }
+    }
+
+    showConfirmation(file) {
+        this.pendingFile = file;
+
+        // Update confirmation UI
+        if (this.confirmFileName) {
+            this.confirmFileName.textContent = file.name;
+        }
+        if (this.confirmFileSize) {
+            this.confirmFileSize.textContent = this.formatFileSize(file.size);
+        }
+
+        // Show confirmation section
+        if (this.confirmSection) {
+            this.confirmSection.classList.add('active');
+        }
+
+        // Hide result card if visible
+        if (this.resultCard) {
+            this.resultCard.classList.remove('active');
+        }
+    }
+
+    confirmUpload() {
+        if (this.pendingFile) {
+            this.uploadFile(this.pendingFile);
+            this.hideConfirmation();
+        }
+    }
+
+    cancelUpload() {
+        this.pendingFile = null;
+        this.hideConfirmation();
+
+        // Clear file input
+        if (this.fileInput) {
+            this.fileInput.value = '';
+        }
+
+        this.showToast('キャンセルしました', 'info');
+    }
+
+    hideConfirmation() {
+        if (this.confirmSection) {
+            this.confirmSection.classList.remove('active');
+        }
+        this.pendingFile = null;
     }
 
     async uploadFile(file) {
@@ -87,7 +179,7 @@ class FileDawnloader {
             formData.append('code', code);
         }
 
-        const endpoint = this.isAdmin ? '/upload/admin' : '/upload/public';
+        const endpoint = this.isAdmin ? `${this.basePath}/upload/admin` : `${this.basePath}/upload/public`;
 
         this.showProgress();
 
@@ -161,6 +253,7 @@ class FileDawnloader {
 
     showResult(result) {
         this.hideProgress();
+        this.hideConfirmation();
         this.resultCard.classList.add('active');
         this.downloadLink.value = result.downloadUrl;
 
@@ -197,7 +290,7 @@ class FileDawnloader {
 
     async loadFiles() {
         try {
-            const response = await fetch('/api/files');
+            const response = await fetch(`${this.basePath}/api/files`);
             if (!response.ok) throw new Error('Failed to load files');
 
             const data = await response.json();
@@ -240,7 +333,7 @@ class FileDawnloader {
 
     async copyFileLink(code) {
         const baseUrl = window.location.origin;
-        const link = `${baseUrl}/d/${code}`;
+        const link = `${baseUrl}${this.basePath}/d/${code}`;
 
         try {
             await navigator.clipboard.writeText(link);
@@ -254,7 +347,7 @@ class FileDawnloader {
         if (!confirm('このファイルを削除しますか？')) return;
 
         try {
-            const response = await fetch(`/api/files/${id}`, { method: 'DELETE' });
+            const response = await fetch(`${this.basePath}/api/files/${id}`, { method: 'DELETE' });
             if (!response.ok) throw new Error('Failed to delete');
 
             this.showToast('ファイルを削除しました', 'success');

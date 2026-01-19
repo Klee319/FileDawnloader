@@ -23,17 +23,25 @@ export const authMiddleware = async (c: Context, next: Next) => {
     // Check for auth query parameter (for initial login)
     const authParam = c.req.query('auth');
     if (authParam === adminSecret) {
+        const basePath = process.env.BASE_PATH || '/';
+        const isHttps = process.env.BASE_URL?.startsWith('https');
+
         setCookie(c, COOKIE_NAME, adminSecret, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: isHttps,
             sameSite: 'Lax',
             maxAge: COOKIE_MAX_AGE,
-            path: '/',
+            path: basePath,
         });
         // Redirect to remove auth from URL
         const url = new URL(c.req.url);
         url.searchParams.delete('auth');
-        return c.redirect(url.pathname + url.search);
+        let redirectPath = url.pathname;
+        // Ensure trailing slash for root paths
+        if (!redirectPath.endsWith('/') && !url.search) {
+            redirectPath += '/';
+        }
+        return c.redirect(redirectPath + url.search);
     }
 
     return c.text('Unauthorized', 401);

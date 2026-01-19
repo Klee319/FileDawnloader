@@ -365,6 +365,10 @@ input:focus {
     border-color: var(--error);
 }
 
+.toast.info {
+    border-color: var(--accent);
+}
+
 @keyframes toastIn {
     from {
         opacity: 0;
@@ -455,4 +459,95 @@ input:focus {
     font-size: 3rem;
     margin-bottom: 1rem;
     opacity: 0.5;
+}
+
+/* File Confirmation Section */
+.confirm-section {
+    display: none;
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    animation: slideIn 0.3s ease;
+}
+
+.confirm-section.active {
+    display: block;
+}
+
+.confirm-section h3 {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: var(--accent);
+}
+
+.confirm-file-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.confirm-file-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+}
+
+.confirm-file-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.confirm-file-name {
+    font-weight: 600;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.25rem;
+}
+
+.confirm-file-size {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.confirm-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.confirm-btn {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.confirm-btn.cancel {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.confirm-btn.cancel:hover {
+    background: var(--bg-primary);
+}
+
+.confirm-btn.upload {
+    background: var(--accent);
+    color: white;
+}
+
+.confirm-btn.upload:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
 }

@@ -12,6 +12,8 @@ class DB {
     constructor() {
         this.db = new Database(DB_PATH);
         this.db.exec('PRAGMA journal_mode = WAL;');
+        this.db.exec('PRAGMA busy_timeout = 5000;'); // 5秒待機してからロックエラー
+        this.db.exec('PRAGMA synchronous = NORMAL;'); // パフォーマンス向上
         this.db.exec(schema);
     }
 
@@ -56,9 +58,9 @@ class DB {
         return stmt.get(id) as File | null;
     }
 
-    getFileByDownloadCode(code: string): (File & { download_link_id: string }) | null {
+    getFileByDownloadCode(code: string): (File & { download_link_id: string; max_downloads: number | null }) | null {
         const stmt = this.db.prepare(`
-            SELECT f.*, dl.id as download_link_id
+            SELECT f.*, dl.id as download_link_id, dl.max_downloads
             FROM files f
             JOIN download_links dl ON f.id = dl.file_id
             WHERE dl.code = ? AND dl.is_active = TRUE
@@ -66,7 +68,7 @@ class DB {
             AND (dl.expires_at IS NULL OR dl.expires_at > datetime('now'))
             AND f.expires_at > datetime('now')
         `);
-        return stmt.get(code) as (File & { download_link_id: string }) | null;
+        return stmt.get(code) as (File & { download_link_id: string; max_downloads: number | null }) | null;
     }
 
     getAllActiveFiles(): File[] {

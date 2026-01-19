@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FileDawnloader - アップロード</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="css/style.css">
     <script>
         // Auto-fill code from URL
         document.addEventListener('DOMContentLoaded', () => {
@@ -46,6 +47,22 @@
             <input type="text" id="displayName" placeholder="ファイルの表示名を入力">
         </div>
 
+        <!-- File Confirmation Section -->
+        <div class="confirm-section" id="confirmSection">
+            <h3>アップロードするファイル</h3>
+            <div class="confirm-file-info">
+                <div class="confirm-file-icon">📄</div>
+                <div class="confirm-file-details">
+                    <div class="confirm-file-name" id="confirmFileName">-</div>
+                    <div class="confirm-file-size" id="confirmFileSize">-</div>
+                </div>
+            </div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn cancel" id="cancelUploadBtn">キャンセル</button>
+                <button class="confirm-btn upload" id="confirmUploadBtn">アップロード</button>
+            </div>
+        </div>
+
         <!-- Progress Bar -->
         <div class="progress-container" id="progressContainer">
             <div class="progress-bar">
@@ -68,6 +85,6 @@
         </div>
     </div>
 
-    <script src="/js/app.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

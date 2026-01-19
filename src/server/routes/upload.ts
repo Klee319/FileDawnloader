@@ -5,6 +5,7 @@ import { isAdmin } from '../middleware/auth';
 import path from 'path';
 import fs from 'fs/promises';
 import { nanoid } from 'nanoid';
+import { updateAllPanels } from '../../bot/index';
 
 const upload = new Hono();
 
@@ -62,8 +63,11 @@ upload.post('/admin', async (c) => {
         fileId: fileRecord.id,
     });
 
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const baseUrl = (process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`) + (process.env.BASE_PATH || '');
     const downloadUrl = `${baseUrl}/d/${downloadLink.code}`;
+
+    // Update Discord panels
+    updateAllPanels().catch(console.error);
 
     return c.json({
         success: true,
@@ -137,8 +141,11 @@ upload.post('/public', async (c) => {
         fileId: fileRecord.id,
     });
 
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const baseUrl = (process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`) + (process.env.BASE_PATH || '');
     const downloadUrl = `${baseUrl}/d/${downloadLink.code}`;
+
+    // Update Discord panels
+    updateAllPanels().catch(console.error);
 
     return c.json({
         success: true,

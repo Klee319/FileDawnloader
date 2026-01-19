@@ -3,6 +3,7 @@
 
 import { db } from '../db';
 import fs from 'fs/promises';
+import path from 'path';
 
 async function cleanup() {
     console.log('Starting cleanup...');
@@ -17,8 +18,9 @@ async function cleanup() {
         // Delete physical files
         for (const filePath of expiredFilePaths) {
             try {
-                await fs.unlink(filePath);
-                console.log(`Deleted: ${filePath}`);
+                const absolutePath = path.resolve(filePath);
+                await fs.unlink(absolutePath);
+                console.log(`Deleted: ${absolutePath}`);
             } catch (e) {
                 console.warn(`Failed to delete file: ${filePath}`, e);
             }
