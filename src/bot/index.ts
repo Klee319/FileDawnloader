@@ -342,15 +342,17 @@ async function handleModal(interaction: ModalSubmitInteraction) {
                 .setTitle('🔑 アップロードコード発行完了')
                 .setDescription(`このリンクを共有すると、相手がファイルをアップロードできます。`)
                 .addFields(
-                    { name: 'URL', value: `${baseUrl}/public?code=`, inline: false },
-                    { name: 'コード', value: `\`${code.code}\``, inline: true },
                     { name: '使用回数', value: `${maxUses}回`, inline: true },
                     { name: '最大サイズ', value: `${maxSize}MB`, inline: true },
                     { name: '有効期限', value: formatDate(code.expires_at), inline: true },
                 )
                 .setColor(0x4ade80);
 
-            await interaction.editReply({ embeds: [embed] });
+            // Embedとは別にコピー可能なURLをテキストで送信
+            await interaction.editReply({
+                content: `${uploadUrl}`,
+                embeds: [embed],
+            });
             autoDeleteReply(interaction, 30000);
         }
         else if (customId === 'download_limit_modal') {
@@ -387,15 +389,17 @@ async function handleModal(interaction: ModalSubmitInteraction) {
 
             const embed = new EmbedBuilder()
                 .setTitle('🔗 ダウンロードリンク発行完了')
-                .setDescription(`**${file?.display_name || file?.original_name}** のダウンロードリンクを発行しました。`)
+                .setDescription(`**${file?.display_name || file?.original_name}**`)
                 .addFields(
-                    { name: 'URL', value: `${baseUrl}/d/`, inline: false },
-                    { name: 'コード', value: `\`${link.code}\``, inline: true },
                     { name: '回数制限', value: limitText, inline: true },
                 )
                 .setColor(0x4ade80);
 
-            await interaction.editReply({ embeds: [embed] });
+            // Embedとは別にコピー可能なURLをテキストで送信
+            await interaction.editReply({
+                content: `${downloadUrl}`,
+                embeds: [embed],
+            });
             autoDeleteReply(interaction, 30000);
 
             // Refresh panel (非同期で実行、待機しない)
