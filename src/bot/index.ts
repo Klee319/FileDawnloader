@@ -342,7 +342,7 @@ async function handleModal(interaction: ModalSubmitInteraction) {
                 .setTitle('🔑 アップロードコード発行完了')
                 .setDescription(`このリンクを共有すると、相手がファイルをアップロードできます。`)
                 .addFields(
-                    { name: 'アップロードURL', value: `\`\`\`${uploadUrl}\`\`\``, inline: false },
+                    { name: 'URL', value: `${baseUrl}/public?code=`, inline: false },
                     { name: 'コード', value: `\`${code.code}\``, inline: true },
                     { name: '使用回数', value: `${maxUses}回`, inline: true },
                     { name: '最大サイズ', value: `${maxSize}MB`, inline: true },
@@ -389,8 +389,9 @@ async function handleModal(interaction: ModalSubmitInteraction) {
                 .setTitle('🔗 ダウンロードリンク発行完了')
                 .setDescription(`**${file?.display_name || file?.original_name}** のダウンロードリンクを発行しました。`)
                 .addFields(
-                    { name: 'ダウンロードURL', value: `\`\`\`${downloadUrl}\`\`\``, inline: false },
-                    { name: 'ダウンロード回数制限', value: limitText, inline: true },
+                    { name: 'URL', value: `${baseUrl}/d/`, inline: false },
+                    { name: 'コード', value: `\`${link.code}\``, inline: true },
+                    { name: '回数制限', value: limitText, inline: true },
                 )
                 .setColor(0x4ade80);
 
