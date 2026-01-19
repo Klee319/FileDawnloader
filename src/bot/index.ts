@@ -52,13 +52,13 @@ function formatFileSize(bytes: number): string {
 
 function formatDate(dateStr: string): string {
     const date = new Date(dateStr);
-    return date.toLocaleString('ja-JP', {
-        timeZone: 'Asia/Tokyo',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
+    // UTC+9 (JST) に手動変換
+    const jstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+    const month = String(jstDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(jstDate.getUTCDate()).padStart(2, '0');
+    const hour = String(jstDate.getUTCHours()).padStart(2, '0');
+    const minute = String(jstDate.getUTCMinutes()).padStart(2, '0');
+    return `${month}/${day} ${hour}:${minute}`;
 }
 
 function getBaseUrl(): string {
