@@ -355,7 +355,7 @@ async function handleModal(interaction: ModalSubmitInteraction) {
 
             // Embedとは別にコピー可能なURLをテキストで送信（スマホ用）
             await interaction.editReply({
-                content: `📋 **スマホ用（長押しでコピー）**\n${uploadUrl}`,
+                content: `${uploadUrl}`,
                 embeds: [embed],
             });
             autoDeleteReply(interaction, 30000);
@@ -403,7 +403,7 @@ async function handleModal(interaction: ModalSubmitInteraction) {
 
             // Embedとは別にコピー可能なURLをテキストで送信（スマホ用）
             await interaction.editReply({
-                content: `📋 **スマホ用（長押しでコピー）**\n${downloadUrl}`,
+                content: `${downloadUrl}`,
                 embeds: [embed],
             });
             autoDeleteReply(interaction, 30000);
