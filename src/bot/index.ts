@@ -342,15 +342,16 @@ async function handleModal(interaction: ModalSubmitInteraction) {
                 .setTitle('🔑 アップロードコード発行完了')
                 .setDescription(`このリンクを共有すると、相手がファイルをアップロードできます。`)
                 .addFields(
+                    { name: 'URL（PCはここをクリック）', value: `\`\`\`${uploadUrl}\`\`\``, inline: false },
                     { name: '使用回数', value: `${maxUses}回`, inline: true },
                     { name: '最大サイズ', value: `${maxSize}MB`, inline: true },
                     { name: '有効期限', value: formatDate(code.expires_at), inline: true },
                 )
                 .setColor(0x4ade80);
 
-            // Embedとは別にコピー可能なURLをテキストで送信
+            // Embedとは別にコピー可能なURLをテキストで送信（スマホ用）
             await interaction.editReply({
-                content: `${uploadUrl}`,
+                content: `📋 **スマホ用（長押しでコピー）**\n${uploadUrl}`,
                 embeds: [embed],
             });
             autoDeleteReply(interaction, 30000);
@@ -391,13 +392,14 @@ async function handleModal(interaction: ModalSubmitInteraction) {
                 .setTitle('🔗 ダウンロードリンク発行完了')
                 .setDescription(`**${file?.display_name || file?.original_name}**`)
                 .addFields(
+                    { name: 'URL（PCはここをクリック）', value: `\`\`\`${downloadUrl}\`\`\``, inline: false },
                     { name: '回数制限', value: limitText, inline: true },
                 )
                 .setColor(0x4ade80);
 
-            // Embedとは別にコピー可能なURLをテキストで送信
+            // Embedとは別にコピー可能なURLをテキストで送信（スマホ用）
             await interaction.editReply({
-                content: `${downloadUrl}`,
+                content: `📋 **スマホ用（長押しでコピー）**\n${downloadUrl}`,
                 embeds: [embed],
             });
             autoDeleteReply(interaction, 30000);
